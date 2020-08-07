@@ -37,39 +37,22 @@ for _ in range(100):
     print('policy score', score)
 
 policy = np.random.rand(1,4)
-score, observations = play(env, max_score_policy[0], True)
+score, observations = play(env, max_score_policy[0], False)
 print('policy score', score)
 
 
 
-#from flask import Flask
-#import json 
-#
-#app = Flask(__name__, static_folder='.')
-#@app.route("/data")
-#def data():
-#    return json.dump(observations)
-#
-#@app.route('/')
-#def root():
-#    return app.send_static_file('./index.html')
-#
-#
-#app.run(host='0.0.0.0', port='3000')
-#
+from flask import Flask
+import json 
+
+app = Flask(__name__, static_folder='.')
+@app.route("/data")
+def data():
+    return json.dumps(observations)
+
+@app.route('/')
+def root():
+    return app.send_static_file('./index.html')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+app.run(host='0.0.0.0', port='3000')
