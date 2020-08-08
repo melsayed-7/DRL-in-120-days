@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
     Training an agent with (stochastic) Policy Gradients on Pong game using OpenAI Gym.
     This file is me trying to bunch of stuff from Andrej's small code (https://gist.github.com/karpathy/a4166c7fe253700972fcbc77e4ea32c5)
@@ -7,16 +9,14 @@ import numpy as np
 import pickle
 import gym
 
-
 # hyperparameters
-
 H = 200
 batch_size = 10
 learning_rate = 1e-4
 gamma = 0.99
 decay_rate = 0.99
 resume = False
-render = False
+render = True
 
 D = 80*80 # input dimenstionality
 
@@ -30,6 +30,15 @@ else:
 grad_buffer = {k : np.zeros_like(v) for k,v in model.items()}
 rmsprop_cache = {k : np.zeros_like(v) for k,v in model.items()}
 
+
+env = gym.make("Pong-v0")
+observation = env.reset()
+prev_x = None
+
+xs, hs, dlogps, drs = [], [], [], []
+running_reward = None
+reward_sum = 0
+episode_number = 0
 
 def sigmoid(x):
     return 1.0/(1.0 + np.exp(-x))
@@ -46,7 +55,6 @@ def preprocess(I):
 def discount_rewards(r):
     running_add = 0
     discounted_r = np.zeros_like(r)
-
     for t in reversed(range(r.size)):
         if r[t] != 0: running_add = 0
         running_add += running_add*gamma + r[t]
@@ -59,7 +67,6 @@ def policy_forward(x):
     h[h<0] = 0 #ReLU
     logp = np.dot(model['W2'], h)
     p = sigmoid(logp)
-
     return p, h
 
 def policy_backward(eph, epdlogp):
@@ -68,16 +75,6 @@ def policy_backward(eph, epdlogp):
     dh[eph <= 0] = 0
     dW1 = np.dot(dh.T, epx)
     return {'W1': dW1, 'W2': dW2}
-h
-
-env = gym.make("Pong-v0")
-observation = env.reset()
-prev_x = None
-
-xs, hs, dlogps, drs = [], [], [], []
-running_reward = None
-reward_sum = 0
-episode_number = 0
 
 while True:
     if render: env.render()
@@ -99,7 +96,6 @@ while True:
     reward_sum += reward
 
     drs.append(reward)
-
     if done:
         episode_number += 1
 
@@ -107,11 +103,10 @@ while True:
         eph = np.vstack(hs)
         epdlogp = np.vstack(dlogps)
         epr = np.vstack(drs)
-
+        print(epr.shape)
         xs,hs,dlogps,drs = [],[],[],[]
 
         discounted_epr = discount_rewards(epr)
-
         discounted_epr -= np.mean(discounted_epr)
         discounted_epr /= np.std(discounted_epr)
 
