@@ -3,6 +3,7 @@
 import numpy as np
 import gym
 import random
+
 # Hyperparameters
 num_actions = 4
 epsilon = 1.0
@@ -16,6 +17,7 @@ def eps_greedy_action(qtable, state, is_eps_greedy=True):
     if is_eps_greedy:
         if random.random() < epsilon:
             action = random.randint(0, num_actions - 1)
+            return action
     return action
 
 
@@ -44,7 +46,7 @@ for i in range(20000):
 
     state = env.reset()
     rewards = []
-    for j in range(100):
+    while(True):
         action = eps_greedy_action(qtable, state)
         new_state, reward, done, info = env.step(action)
         rewards.append(reward)
@@ -52,6 +54,6 @@ for i in range(20000):
         state = new_state
         if done:
             epsilon *= EPS_DECAY_RATE
-            print(i, np.mean(rewards), state)
+            print(i, np.sum(rewards), state)
             print(qtable)
             break
