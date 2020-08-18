@@ -20,18 +20,17 @@ def eps_greedy_action(qtable, state, is_eps_greedy=True):
 
 
 def best_action(qtable, state):
+    max_value = 0
+    best_action = 0
     for action in range(num_actions):
         if(qtable[state, action] > max_value):
             max_value = qtable[state, action]
             best_action = action
-
-    max_value = 0
-    best_action = 0
-   return max_value, best_action
+    return max_value, best_action
 
 
 def update_qtable(qtable, state, new_state, action, reward):
-    max_q, _ = best_action(qtable, state)
+    max_q, _ = best_action(qtable, new_state)
     qtable[state, action] += alpha * \
         (reward + gamma * max_q - qtable[state, action])
 
@@ -41,16 +40,18 @@ num_states = env.observation_space.n
 
 qtable = np.zeros((num_states, num_actions), dtype=np.float64)
 
-for i in range(1000):
+for i in range(20000):
+
     state = env.reset()
-    reward_sum = 0
+    rewards = []
     for j in range(100):
         action = eps_greedy_action(qtable, state)
         new_state, reward, done, info = env.step(action)
-        reward_sum += reward
+        rewards.append(reward)
         update_qtable(qtable, state, new_state, action, reward)
         state = new_state
         if done:
             epsilon *= EPS_DECAY_RATE
-            print(i, reward, state)
+            print(i, np.mean(rewards), state)
+            print(qtable)
             break
