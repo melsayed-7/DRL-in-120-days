@@ -20,10 +20,14 @@
 
 - The networks plays the role of a function-approximator
 
-This is a model-free because the agent knows nothing about the dynamics of the environment.
+- This is a model-free because the agent knows nothing about the dynamics of the environment.
 
-It is also off-policy: learning greedy strategy $a= max_a Q(s,a; \theta)$
+- It is also off-policy: learning greedy strategy $a= max_a Q(s,a; \theta)$
 
-And the differentiation of that is
+- And the differentiation of that is
 
-$\nabla_{\theta_{i}} L_{i}\left(\theta_{i}\right)=\mathbb{E}_{s, a \sim \rho(\cdot) ; s^{\prime} \sim \mathcal{E}}\left[\left(r+\gamma \max _{a^{\prime}} Q\left(s^{\prime}, a^{\prime} ; \theta_{i-1}\right)-Q\left(s, a ; \theta_{i}\right)\right) \nabla_{\theta_{i}} Q\left(s, a ; \theta_{i}\right)\right]$
+  $\nabla_{\theta_{i}} L_{i}\left(\theta_{i}\right)=\mathbb{E}_{s, a \sim \rho(\cdot) ; s^{\prime} \sim \mathcal{E}}\left[\left(r+\gamma \max _{a^{\prime}} Q\left(s^{\prime}, a^{\prime} ; \theta_{i-1}\right)-Q\left(s, a ; \theta_{i}\right)\right) \nabla_{\theta_{i}} Q\left(s, a ; \theta_{i}\right)\right]$
+
+- They use something called experience replay. They store the agent experience in a database where each entry is e = (s_t, a_t, r_t, s_t+1)
+
+-
