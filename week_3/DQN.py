@@ -7,6 +7,7 @@ import cv2
 import gym
 import collections
 import time
+from network import DQN
 
 env = gym.make("BeamRider-v0")
 
@@ -36,16 +37,24 @@ def pick_action(observation):
     #     return DQN(observation)
 
 
-starttime = time.time()
-for i in range(num_episodes):
-    # time.sleep(0.1 - ((time.time() - starttime) % 0.1))
-    observation = env.reset()
-    observation = preprocess(observation)
-    while(True):
-        env.render()
-        action = pick_action(observation)
-        new_observation, reward, done, info = env.step(action)
-        new_observation = preprocess(new_observation)
-        buffer.append((observation, action, reward, new_observation))
-        if done:
-            break
+# starttime = time.time()
+# for i in range(num_episodes):
+#     # time.sleep(0.1 - ((time.time() - starttime) % 0.1))
+#     observation = env.reset()
+#     observation = preprocess(observation)
+#     while(True):
+#         env.render()
+#         action = pick_action(observation)
+#         new_observation, reward, done, info = env.step(action)
+#         new_observation = preprocess(new_observation)
+#         buffer.append((observation, action, reward, new_observation))
+#         if done:
+#             break
+
+
+obs = env.reset()
+obs = preprocess(obs)
+
+obs = [obs, obs, obs, obs]
+net = DQN()
+print(net.forward(torch.tensor(obs).unsqueeze(0).float()))
