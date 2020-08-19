@@ -3,6 +3,8 @@
 import numpy as np
 import random
 import torch
+import torch.nn as nn
+import torch.optim as optim
 import cv2
 import gym
 import collections
@@ -19,8 +21,7 @@ num_frames = 4
 num_episodes = 100
 epsilon = 1.0
 epsilon_decay = 0.993
-
-buffer = collections.deque(maxlen=N)
+gamma = 0.9
 
 
 def preprocess(img):
@@ -37,24 +38,49 @@ def pick_action(observation):
     #     return DQN(observation)
 
 
-# starttime = time.time()
-# for i in range(num_episodes):
-#     # time.sleep(0.1 - ((time.time() - starttime) % 0.1))
-#     observation = env.reset()
-#     observation = preprocess(observation)
-#     while(True):
-#         env.render()
-#         action = pick_action(observation)
-#         new_observation, reward, done, info = env.step(action)
-#         new_observation = preprocess(new_observation)
-#         buffer.append((observation, action, reward, new_observation))
-#         if done:
-#             break
-
-
-obs = env.reset()
-obs = preprocess(obs)
-
-obs = [obs, obs, obs, obs]
 net = DQN()
-print(net.forward(torch.tensor(obs).unsqueeze(0).float()))
+criterion = nn.MSELoss()
+optimizer = optim.Adam(net.parameters(), lr=0.01)
+starttime = time.time()
+buffer = collections.deque(maxlen=N)
+lr = 1e-3
+
+
+for i in range(num_episodes):
+    observation = env.reset()
+    observation = preprocess(observation)
+    observation = [observation, observation, observation, observation]
+    j = 0
+
+    while(True):
+        j += 1
+        # time.sleep(0.1 - ((time.time() - starttime) % 0.1))
+        if j % 4:
+            env.render()
+            action = torch.argmax(
+                net(torch.tensor(observation).float().unsqueeze(0)))
+            new_observation, reward, done, info = env.step(action)
+            old_observation = observation.copy()
+            new_observation = preprocess(new_observation)
+            observation.append(new_observation)
+            observation.pop(0)
+
+            if len(buffer) > 32:
+                batch = random.sample(list(buffer), 1)
+                y = [(batch[k][2] + gamma * torch.max(net(torch.tensor(batch[k]
+                                                                       [3]).float().unsqueeze(0)))) if k < j else batch[k][2] for k in range(len(batch))]
+                y = torch.tensor(y)
+                print(y)
+                # print(net(torch.tensor(batch[0][0]).float().unsqueeze(0)))
+                phi = torch.max(
+                    net(torch.tensor(batch[0][0]).float().unsqueeze(0)))
+                print(phi)
+                loss = criterion(y, phi)
+                net.zero_grad()
+                loss.backward()
+
+        # if j % 500:
+        buffer.append((old_observation, action, reward, observation, j))
+
+        if done:
+            break

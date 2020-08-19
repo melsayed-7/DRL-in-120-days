@@ -12,7 +12,7 @@ class DQN(nn.Module):
         self.conv1 = nn.Conv2d(4, 16, kernel_size=8, stride=4)
         self.conv2 = nn.Conv2d(16, 32, kernel_size=4, stride=2)
         self.fc1 = nn.Linear(32*9*9, 256)
-        self.fc2 = nn.Linear(256, 1)
+        self.fc2 = nn.Linear(256, 9)
 
     def forward(self, x):
         x = F.relu(self.conv1(x))
