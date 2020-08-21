@@ -1,0 +1,6 @@
+- I knew some python tricks
+- loss in PyTorch requires*grad*
+- I understand the math more now.
+- All of this was done in Vim and tmux
+- I need to add some visualizations and some code to test
+- The loss function used is MSE according to the paper
