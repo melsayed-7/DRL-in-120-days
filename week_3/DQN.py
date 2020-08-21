@@ -66,16 +66,16 @@ for i in range(num_episodes):
             observation.pop(0)
 
             if len(buffer) > 32:
-                batch = random.sample(list(buffer), 1)
+                batch = random.sample(list(buffer), 32)
                 y = [(batch[k][2] + gamma * torch.max(net(torch.tensor(batch[k]
                                                                        [3]).float().unsqueeze(0)))) if k < j else batch[k][2] for k in range(len(batch))]
                 y = torch.tensor(y)
-                print(y)
                 # print(net(torch.tensor(batch[0][0]).float().unsqueeze(0)))
-                phi = torch.max(
-                    net(torch.tensor(batch[0][0]).float().unsqueeze(0)))
+                phi = [torch.max(
+                    net(torch.tensor(batch[k][0]).float().unsqueeze(0))) for k in range(len(batch))]
                 print(phi)
-                loss = criterion(y, phi)
+                loss = criterion(y, torch.tensor(phi))
+                loss.requires_grad_()
                 net.zero_grad()
                 loss.backward()
 
