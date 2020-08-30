@@ -38,4 +38,17 @@ My notes of this [paper](https://arxiv.org/pdf/1710.02298.pdf)
 - The now loss function is now like that
   - ![image4](./n_loss.png)
 
-### Distributional
+### Distributional RL
+
+- needs a whole session (will get back to it later)
+
+### Noisy nets
+
+- Instead of doing totally deterministic action or random one, we combine both. The equation is simply this
+  - ![image5](./noisy_net.png)
+
+# To be Continued
+
+## General notes:
+
+- DQN is \***\*value-based\*\*** algorithm.
