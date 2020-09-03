@@ -4,9 +4,8 @@ This is my work for this [curriculum](https://github.com/andri27-ts/Reinforcemen
 
 - [x] Week 1
 - [x] Week 2
-- [ ] Week 3 (Almost)
-- [ ] Week 4
+- [x] Week 3
+- [ ] Week 4 (on-going)
 - [ ] Week 5
 - [ ] Week 6
 - [ ] Week 7
-
